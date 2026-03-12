@@ -37,6 +37,11 @@ namespace BookShop
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.pictureBoxCaptcha = new System.Windows.Forms.PictureBox();
+            this.txtCaptcha = new System.Windows.Forms.TextBox();
+            this.btnRefreshCaptcha = new System.Windows.Forms.Button();
+            this.lblCaptcha = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCaptcha)).BeginInit();
             this.SuspendLayout();
             // 
             // txtUsername
@@ -101,13 +106,55 @@ namespace BookShop
             this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             // 
+            // pictureBoxCaptcha
+            // 
+            this.pictureBoxCaptcha.Location = new System.Drawing.Point(397, 73);
+            this.pictureBoxCaptcha.Name = "pictureBoxCaptcha";
+            this.pictureBoxCaptcha.Size = new System.Drawing.Size(79, 61);
+            this.pictureBoxCaptcha.TabIndex = 4;
+            this.pictureBoxCaptcha.TabStop = false;
+            // 
+            // txtCaptcha
+            // 
+            this.txtCaptcha.Location = new System.Drawing.Point(382, 140);
+            this.txtCaptcha.Name = "txtCaptcha";
+            this.txtCaptcha.Size = new System.Drawing.Size(94, 20);
+            this.txtCaptcha.TabIndex = 5;
+            // 
+            // btnRefreshCaptcha
+            // 
+            this.btnRefreshCaptcha.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.btnRefreshCaptcha.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRefreshCaptcha.Location = new System.Drawing.Point(382, 166);
+            this.btnRefreshCaptcha.Name = "btnRefreshCaptcha";
+            this.btnRefreshCaptcha.Size = new System.Drawing.Size(94, 50);
+            this.btnRefreshCaptcha.TabIndex = 6;
+            this.btnRefreshCaptcha.Text = "Обновить";
+            this.btnRefreshCaptcha.UseVisualStyleBackColor = false;
+            this.btnRefreshCaptcha.Click += new System.EventHandler(this.btnRefreshCaptcha_Click);
+            // 
+            // lblCaptcha
+            // 
+            this.lblCaptcha.AutoSize = true;
+            this.lblCaptcha.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
+            this.lblCaptcha.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblCaptcha.Location = new System.Drawing.Point(330, 140);
+            this.lblCaptcha.Name = "lblCaptcha";
+            this.lblCaptcha.Size = new System.Drawing.Size(51, 20);
+            this.lblCaptcha.TabIndex = 7;
+            this.lblCaptcha.Text = "label3";
+            // 
             // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(64)))), ((int)(((byte)(0)))));
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-            this.ClientSize = new System.Drawing.Size(328, 246);
+            this.ClientSize = new System.Drawing.Size(517, 273);
+            this.Controls.Add(this.lblCaptcha);
+            this.Controls.Add(this.btnRefreshCaptcha);
+            this.Controls.Add(this.txtCaptcha);
+            this.Controls.Add(this.pictureBoxCaptcha);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnLogin);
@@ -121,6 +168,7 @@ namespace BookShop
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LoginForm";
             this.Load += new System.EventHandler(this.LoginForm_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCaptcha)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -134,6 +182,10 @@ namespace BookShop
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.PictureBox pictureBoxCaptcha;
+        private System.Windows.Forms.TextBox txtCaptcha;
+        private System.Windows.Forms.Button btnRefreshCaptcha;
+        private System.Windows.Forms.Label lblCaptcha;
     }
 }
 

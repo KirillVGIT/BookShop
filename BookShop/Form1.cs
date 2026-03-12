@@ -8,16 +8,85 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using System.IO;
 
 namespace BookShop
 {
     public partial class LoginForm : Form
-       // server=10.207.106.12; user=user83;password=qp96;database=db83;
+    // server=10.207.106.12; user=user83;password=qp96;database=db83;
     {
+        // строка подкл
         string connStr = "server=127.0.0.1;user=root;password=;database=dbbook83;";
+        private int failedAttempts = 0;
+        private bool captchaRequired = false;
+        private int currentCaptchaIndex = 0;
+        private string[] captchaValues = { "kv7p", "vr5y", "dr3t" };
+        private string[] captchaFiles = { "captcha1.png", "captcha2.png", "captcha3.png" };
+        private Timer lockTimer = new Timer();
+        private int lockSeconds = 0;
         public LoginForm()
         {
             InitializeComponent();
+            SetupCaptchaControls();
+            lockTimer.Interval = 1000;
+            lockTimer.Tick += LockTimer_Tick;
+        }
+
+        private void SetupCaptchaControls()
+        {
+            // По умолчанию капча скрыта
+            pictureBoxCaptcha.Visible = false;
+            txtCaptcha.Visible = false;
+            btnRefreshCaptcha.Visible = false;
+            lblCaptcha.Visible = false;
+        }
+
+        private void ShowCaptcha()
+        {
+            pictureBoxCaptcha.Visible = true;
+            txtCaptcha.Visible = true;
+            btnRefreshCaptcha.Visible = true;
+            lblCaptcha.Visible = true;
+            LoadCaptchaImage(0);
+        }
+
+        private void LoadCaptchaImage(int index)
+        {
+            try
+            {
+                string path = Path.Combine(Application.StartupPath, "Images", captchaFiles[index]);
+                if (File.Exists(path))
+                {
+                    pictureBoxCaptcha.Image = Image.FromFile(path);
+                    currentCaptchaIndex = index;
+                }
+                else
+                {
+                    MessageBox.Show($"Файл {captchaFiles[index]} не найден в папке Images", "Ошибка");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка загрузки капчи: " + ex.Message);
+            }
+        }
+
+        private void LockTimer_Tick(object sender, EventArgs e)
+        {
+            lockSeconds--;
+            btnLogin.Enabled = false;
+            btnRefreshCaptcha.Enabled = false;
+
+            if (lockSeconds <= 0)
+            {
+                lockTimer.Stop();
+                btnLogin.Enabled = true;
+                btnRefreshCaptcha.Enabled = true;
+                failedAttempts = 0;
+                captchaRequired = false;
+                SetupCaptchaControls();
+                MessageBox.Show("Блокировка снята. Можете повторить попытку.", "Информация");
+            }
         }
 
         private void LoginForm_Load(object sender, EventArgs e)
@@ -27,31 +96,82 @@ namespace BookShop
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            string username = txtUsername.Text;
+            string username = txtUsername.Text.Trim();
             string password = txtPassword.Text;
 
+            // Проверка капчи (если требуется)
+            if (captchaRequired)
+            {
+                if (txtCaptcha.Text.Trim().ToLower() != captchaValues[currentCaptchaIndex])
+                {
+                    MessageBox.Show("Неверные символы с картинки!", "Ошибка");
+                    txtCaptcha.Text = "";
+                    txtCaptcha.Focus();
+                    return;
+                }
+            }
+
+            // Проверка логина и пароля
             if (username == "admin1" && password == "admin123")
             {
+                failedAttempts = 0;
+                captchaRequired = false;
                 AdminForm adminForm = new AdminForm();
                 adminForm.Show();
                 this.Hide();
             }
             else if (username == "seller1" && password == "sell123")
             {
-                ProdavecForm prodavecForm = new ProdavecForm(); // Правильное название
+                failedAttempts = 0;
+                captchaRequired = false;
+                ProdavecForm prodavecForm = new ProdavecForm();
                 prodavecForm.Show();
                 this.Hide();
             }
             else if (username == "store1" && password == "store123")
             {
-                KladovshikForm kladovshikForm = new KladovshikForm(); // Правильное название
+                failedAttempts = 0;
+                captchaRequired = false;
+                KladovshikForm kladovshikForm = new KladovshikForm();
                 kladovshikForm.Show();
                 this.Hide();
             }
             else
             {
+                // Неудачная попытка
+                failedAttempts++;
                 MessageBox.Show("Неверный логин или пароль");
+
+                if (failedAttempts >= 1 && !captchaRequired)
+                {
+                    // После первой неудачи включаем капчу
+                    captchaRequired = true;
+                    ShowCaptcha();
+                }
+                else if (failedAttempts >= 2 && captchaRequired)
+                {
+                    // Вторая неудача с капчей — блокировка 10 секунд
+                    MessageBox.Show("Слишком много неудачных попыток. Вход заблокирован на 10 секунд.", "Блокировка");
+                    lockSeconds = 10;
+                    lockTimer.Start();
+                    SetupCaptchaControls();
+                }
+                else
+                {
+                    // Просто переключаем капчу на следующую
+                    int nextIndex = (currentCaptchaIndex + 1) % captchaFiles.Length;
+                    LoadCaptchaImage(nextIndex);
+                    txtCaptcha.Text = "";
+                }
             }
+        }
+
+        private void btnRefreshCaptcha_Click(object sender, EventArgs e)
+        {
+            // Переключаем на следующую картинку
+            int nextIndex = (currentCaptchaIndex + 1) % captchaFiles.Length;
+            LoadCaptchaImage(nextIndex);
+            txtCaptcha.Text = "";
         }
     }
 }
