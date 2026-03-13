@@ -136,6 +136,7 @@
     <Compile Include="ReportForm.Designer.cs">
       <DependentUpon>ReportForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SessionManager.cs" />
     <Compile Include="SimpleCategoriesForm.cs">
       <SubType>Form</SubType>
     </Compile>
