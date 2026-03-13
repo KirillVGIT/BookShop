@@ -99,23 +99,36 @@ namespace BookShop
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text;
 
-            // Проверка капчи (если требуется)
+            // ЕСЛИ КАПЧА АКТИВНА – ПРОВЕРЯЕМ ЕЁ В ПЕРВУЮ ОЧЕРЕДЬ
             if (captchaRequired)
             {
+                // Проверяем капчу
                 if (txtCaptcha.Text.Trim().ToLower() != captchaValues[currentCaptchaIndex])
                 {
-                    MessageBox.Show("Неверные символы с картинки!", "Ошибка");
-                    txtCaptcha.Text = "";
-                    txtCaptcha.Focus();
-                    return;
+                    // НЕВЕРНАЯ КАПЧА → БЛОКИРОВКА 10 СЕКУНД
+                    MessageBox.Show("Неверная капча! Вход заблокирован на 10 секунд.", "Блокировка");
+
+                    // Скрываем капчу и блокируем кнопки
+                    SetupCaptchaControls();
+                    btnLogin.Enabled = false;
+                    btnRefreshCaptcha.Enabled = false;
+
+                    // Запускаем таймер на 10 секунд
+                    lockSeconds = 10;
+                    lockTimer.Start();
+
+                    return; // Выходим, дальше не идём
                 }
+                // Если капча верна — продолжаем проверку логина/пароля
             }
 
             // Проверка логина и пароля
             if (username == "admin1" && password == "admin123")
             {
+                // Успешный вход
                 failedAttempts = 0;
                 captchaRequired = false;
+                SetupCaptchaControls();
                 AdminForm adminForm = new AdminForm();
                 adminForm.Show();
                 this.Hide();
@@ -124,6 +137,7 @@ namespace BookShop
             {
                 failedAttempts = 0;
                 captchaRequired = false;
+                SetupCaptchaControls();
                 ProdavecForm prodavecForm = new ProdavecForm();
                 prodavecForm.Show();
                 this.Hide();
@@ -132,33 +146,25 @@ namespace BookShop
             {
                 failedAttempts = 0;
                 captchaRequired = false;
+                SetupCaptchaControls();
                 KladovshikForm kladovshikForm = new KladovshikForm();
                 kladovshikForm.Show();
                 this.Hide();
             }
             else
             {
-                // Неудачная попытка
-                failedAttempts++;
+                // Неверный логин/пароль
                 MessageBox.Show("Неверный логин или пароль");
 
-                if (failedAttempts >= 1 && !captchaRequired)
+                if (!captchaRequired)
                 {
-                    // После первой неудачи включаем капчу
+                    // Если капча ещё не показывалась – включаем
                     captchaRequired = true;
                     ShowCaptcha();
                 }
-                else if (failedAttempts >= 2 && captchaRequired)
-                {
-                    // Вторая неудача с капчей — блокировка 10 секунд
-                    MessageBox.Show("Слишком много неудачных попыток. Вход заблокирован на 10 секунд.", "Блокировка");
-                    lockSeconds = 10;
-                    lockTimer.Start();
-                    SetupCaptchaControls();
-                }
                 else
                 {
-                    // Просто переключаем капчу на следующую
+                    // Если капча уже была – обновляем на всякий случай
                     int nextIndex = (currentCaptchaIndex + 1) % captchaFiles.Length;
                     LoadCaptchaImage(nextIndex);
                     txtCaptcha.Text = "";

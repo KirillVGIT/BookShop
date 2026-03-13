@@ -140,9 +140,9 @@ namespace BookShop
             this.lblCaptcha.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.lblCaptcha.Location = new System.Drawing.Point(330, 140);
             this.lblCaptcha.Name = "lblCaptcha";
-            this.lblCaptcha.Size = new System.Drawing.Size(51, 20);
+            this.lblCaptcha.Size = new System.Drawing.Size(47, 20);
             this.lblCaptcha.TabIndex = 7;
-            this.lblCaptcha.Text = "label3";
+            this.lblCaptcha.Text = "ввод";
             // 
             // LoginForm
             // 
