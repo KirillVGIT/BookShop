@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BookShop;
 
 namespace BookShop
 {
@@ -15,6 +16,7 @@ namespace BookShop
         public KladovshikForm()
         {
             InitializeComponent();
+            SessionManager.Initialize(this);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;

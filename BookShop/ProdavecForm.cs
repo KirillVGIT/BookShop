@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BookShop;
 
 namespace BookShop
 {
@@ -18,6 +19,7 @@ namespace BookShop
         public ProdavecForm()
         {
             InitializeComponent();
+            SessionManager.Initialize(this);
             // Сохраняем кто вошел
             
         }
