@@ -190,6 +190,7 @@ namespace BookShop
             this.btnFirstPage.TabIndex = 13;
             this.btnFirstPage.Text = "<<";
             this.btnFirstPage.UseVisualStyleBackColor = true;
+            this.btnFirstPage.Click += new System.EventHandler(this.btnFirstPage_Click);
             // 
             // btnPrevPage
             // 
@@ -199,6 +200,7 @@ namespace BookShop
             this.btnPrevPage.TabIndex = 13;
             this.btnPrevPage.Text = "<";
             this.btnPrevPage.UseVisualStyleBackColor = true;
+            this.btnPrevPage.Click += new System.EventHandler(this.btnPrevPage_Click);
             // 
             // btnNextPage
             // 
@@ -208,6 +210,7 @@ namespace BookShop
             this.btnNextPage.TabIndex = 13;
             this.btnNextPage.Text = ">";
             this.btnNextPage.UseVisualStyleBackColor = true;
+            this.btnNextPage.Click += new System.EventHandler(this.btnNextPage_Click);
             // 
             // btnLastPage
             // 
@@ -217,6 +220,7 @@ namespace BookShop
             this.btnLastPage.TabIndex = 13;
             this.btnLastPage.Text = ">>";
             this.btnLastPage.UseVisualStyleBackColor = true;
+            this.btnLastPage.Click += new System.EventHandler(this.btnLastPage_Click);
             // 
             // lblPageInfo
             // 

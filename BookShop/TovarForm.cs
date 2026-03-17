@@ -174,7 +174,7 @@ namespace BookShop
 
         private void UpdatePageInfo()
         {
-            
+
             // Обновляем информацию о странице
             lblPageInfo.Text = $"Страница {currentPage} из {totalPages}";
 
@@ -363,6 +363,36 @@ namespace BookShop
                 MessageBox.Show("Выберите товар для редактирования!", "Внимание",
                               MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void btnFirstPage_Click(object sender, EventArgs e)
+        {
+            currentPage = 1;
+            LoadProducts();
+        }
+
+        private void btnPrevPage_Click(object sender, EventArgs e)
+        {
+            if (currentPage > 1)
+            {
+                currentPage--;
+                LoadProducts();
+            }
+        }
+
+        private void btnNextPage_Click(object sender, EventArgs e)
+        {
+            if (currentPage < totalPages)
+            {
+                currentPage++;
+                LoadProducts();
+            }
+        }
+
+        private void btnLastPage_Click(object sender, EventArgs e)
+        {
+            currentPage = totalPages;
+            LoadProducts();
         }
     }
 }
