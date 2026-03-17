@@ -18,6 +18,11 @@ namespace BookShop
         string connStr = "server=127.0.0.1;user=root;password=root;database=dbbook50;";
         DataTable productsTable;
         DatabaseHelper dbHelper;
+        private int currentPage = 1;
+        private int totalPages = 1;
+        private int totalRecords = 0;
+        private int pageSize = 20;
+        private DataTable fullDataTable; // для хранения всех данных при фильтрации
 
         // Добавляем публичные свойства для управления кнопками
         public bool ShowAddButton { get; set; } = true;
