@@ -164,6 +164,7 @@ namespace BookShop
 
                     // Обновляем информацию о страницах
                     UpdatePageInfo();
+                    HighlightRows();
                 }
             }
             catch (Exception ex)
@@ -421,8 +422,27 @@ namespace BookShop
             MessageBox.Show("При фильтрации пагинация работает в урезанном режиме. Для полноценной работы нужно изменить логику.");
         }
 
-    }
+        private void HighlightRows()
+        {
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells["Остаток"].Value != null)
+                {
+                    int stock = Convert.ToInt32(row.Cells["Остаток"].Value);
+                    if (stock < 5)
+                    {
+                        row.DefaultCellStyle.BackColor = Color.LightCoral;
+                        row.DefaultCellStyle.ForeColor = Color.Black;
+                    }
+                    else
+                    {
+                        row.DefaultCellStyle.BackColor = Color.White;
+                    }
+                }
+            }
+        }
 
+    }
 }
 
 
