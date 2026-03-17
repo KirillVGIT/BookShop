@@ -424,6 +424,7 @@ namespace BookShop
 
         private void HighlightRows()
         {
+            
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
                 if (row.Cells["Остаток"].Value != null)
