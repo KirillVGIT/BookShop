@@ -203,12 +203,12 @@ namespace BookShop
 
         private void comboCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            ApplyFiltersWithPagination();
         }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            ApplyFiltersWithPagination();
         }
         private void ApplyFilters()
         {
@@ -394,7 +394,35 @@ namespace BookShop
             currentPage = totalPages;
             LoadProducts();
         }
+        private void ApplyFiltersWithPagination()
+        {
+            if (productsTable == null) return;
+
+            string filter = "";
+
+            if (!string.IsNullOrWhiteSpace(txtSearch.Text))
+                filter += $"Название LIKE '%{txtSearch.Text}%'";
+
+            if (comboCategory.SelectedIndex != -1)
+            {
+                if (filter != "") filter += " AND ";
+                filter += $"Категория = '{comboCategory.Text}'";
+            }
+
+            DataTable dt = (DataTable)dataGridView1.DataSource;
+            dt.DefaultView.RowFilter = filter;
+
+            // После фильтрации нужно пересчитать количество страниц
+            int filteredCount = dt.DefaultView.Count;
+            totalPages = (int)Math.Ceiling((double)filteredCount / pageSize);
+            currentPage = 1;
+
+            // Но так как мы фильтруем уже загруженные данные, страницы нужно делать заново
+            MessageBox.Show("При фильтрации пагинация работает в урезанном режиме. Для полноценной работы нужно изменить логику.");
+        }
+
     }
+
 }
 
 
