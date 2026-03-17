@@ -58,6 +58,27 @@ namespace BookShop
                 this.Text = "Просмотр книг (Кладовщик)";
             }
         }
+
+        private int GetTotalRecords()
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connStr))
+                {
+                    conn.Open();
+                    string sql = "SELECT COUNT(*) FROM product";
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    {
+                        return Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка подсчёта записей: " + ex.Message);
+                return 0;
+            }
+        }
         private void LoadCategories()
         {
             try
@@ -87,21 +108,36 @@ namespace BookShop
         {
             try
             {
+                // Получаем общее количество записей
+                totalRecords = GetTotalRecords();
+                totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+                // Корректируем текущую страницу
+                if (currentPage < 1) currentPage = 1;
+                if (currentPage > totalPages) currentPage = totalPages;
+
+                int offset = (currentPage - 1) * pageSize;
+
                 using (MySqlConnection conn = new MySqlConnection(connStr))
                 {
                     conn.Open();
-                    string sql = @"SELECT 
-                            p.product_id AS ID,
-                            p.title AS Название,
-                            p.author AS Автор,
-                            p.price AS Цена,
-                            c.name AS Категория,
-                            p.stock_quantity AS Остаток,
-                            p.image_path
-                          FROM product p
-                          JOIN category c ON p.category_id = c.category_id";
+                    string sql = @"SELECT
+                    p.product_id AS ID,
+                    p.title AS Название,
+                    p.author AS Автор,
+                    p.price AS Цена,
+                    c.name AS Категория,
+                    p.stock_quantity AS Остаток,
+                    p.image_path
+                  FROM product p
+                  JOIN category c ON p.category_id = c.category_id
+                  ORDER BY p.title
+                  LIMIT @pageSize OFFSET @offset";
 
                     MySqlDataAdapter da = new MySqlDataAdapter(sql, conn);
+                    da.SelectCommand.Parameters.AddWithValue("@pageSize", pageSize);
+                    da.SelectCommand.Parameters.AddWithValue("@offset", offset);
+
                     DataTable dt = new DataTable();
                     da.Fill(dt);
 
@@ -125,25 +161,32 @@ namespace BookShop
                     // ПРИВЯЗЫВАЕМ ДАННЫЕ
                     dataGridView1.DataSource = dt;
                     productsTable = dt;
-                    // НАСТРАИВАЕМ ОТОБРАЖЕНИЕ КАРТИНОК
-                    if (dataGridView1.Columns["Обложка"] is DataGridViewImageColumn imgCol)
-                    {
-                        imgCol.ImageLayout = DataGridViewImageCellLayout.Zoom;
-                        imgCol.Width = 120; // ШИРИНА КОЛОНКИ
-                        imgCol.HeaderText = "Обложка";
-                    }
 
-                    // УВЕЛИЧИВАЕМ ВЫСОТУ СТРОК
-                    dataGridView1.RowTemplate.Height = 160; // ВЫСОТА СТРОКИ
-
-                    // АВТОПОДБОР ВЫСОТЫ (чтобы не обрезалось)
-                    dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+                    // Обновляем информацию о страницах
+                    UpdatePageInfo();
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Ошибка при загрузке товаров: " + ex.Message);
             }
+        }
+
+        private void UpdatePageInfo()
+        {
+            // Обновляем информацию о странице
+            lblPageInfo.Text = $"Страница {currentPage} из {totalPages}";
+
+            // Вычисляем диапазон записей на текущей странице
+            int startRecord = (currentPage - 1) * pageSize + 1;
+            int endRecord = Math.Min(currentPage * pageSize, totalRecords);
+            lblRecordInfo.Text = $"{startRecord}-{endRecord} из {totalRecords}";
+
+            // Включаем/выключаем кнопки навигации
+            btnFirstPage.Enabled = currentPage > 1;
+            btnPrevPage.Enabled = currentPage > 1;
+            btnNextPage.Enabled = currentPage < totalPages;
+            btnLastPage.Enabled = currentPage < totalPages;
         }
         private void SetupDataGridView()
         {
