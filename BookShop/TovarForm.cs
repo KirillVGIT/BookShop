@@ -174,6 +174,7 @@ namespace BookShop
 
         private void UpdatePageInfo()
         {
+            
             // Обновляем информацию о странице
             lblPageInfo.Text = $"Страница {currentPage} из {totalPages}";
 
